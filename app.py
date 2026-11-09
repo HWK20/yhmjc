@@ -28,6 +28,10 @@ def track_username_change(message):
     user_id = message.from_user.id
     current_username = message.from_user.username
     
+    # 【调试功能】每次你说话，机器人先在群里回显它当前看到的你
+    debug_text = f"【调试】收到你的消息 | ID: {user_id} | 当前识别用户名: @{str(current_username)}"
+    bot.reply_to(message, debug_text)
+    
     # 检查是否记录过该用户
     if user_id in user_db:
         old_username = user_db[user_id]
@@ -37,10 +41,9 @@ def track_username_change(message):
             
             alert_text = (
                 f"⚠️ 检测到群成员修改 Username！\n\n"
-                f"👤 用户: {message.from_user.first_name}\n"
-                f"🆔 ID: {user_id}\n"
-                f"🔴 旧用户名: {old_str}\n"
-                f"🟢 新用户名: {new_str}"
+                f"用户: {message.from_user.first_name}\n"
+                f"旧用户名: {old_str}\n"
+                f"新用户名: {new_str}"
             )
             bot.reply_to(message, alert_text)
     
