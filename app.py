@@ -4,7 +4,7 @@ import os
 from flask import Flask, request
 
 # 你的机器人 Token
-TOKEN = "9246966528:AAGElMITgNG_zCrQrxQT2_MFdRRa-O9w8_o"
+TOKEN = "9246966528:AAGElMITgnG_zCrQrxQT2_MFdRRa-O9w8_o"
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
