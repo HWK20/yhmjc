@@ -6,7 +6,6 @@ TOKEN = '9246966528:AAGElMITgNG_zCrQrxQT2_MFdRRa-O9w8_o'
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
-# 用于记录用户 ID 与 Username 的对应关系
 user_db = {}
 
 @app.route('/')
@@ -15,40 +14,39 @@ def index():
 
 @app.route('/' + TOKEN, methods=['POST'])
 def webhook():
-    if request.headers.get('content-type') == 'application/json':
-        json_string = request.get_data().decode('utf-8')
-        update = telebot.types.Update.de_json(json_string)
-        bot.process_new_updates([update])
+    try:
+        if request.headers.get('content-type') == 'application/json':
+            json_string = request.get_data().decode('utf-8')
+            # 打印收到的原始 JSON 数据到 Render 日志中！
+            print("RECV JSON:", json_string)
+            update = telebot.types.Update.de_json(json_string)
+            bot.process_new_updates([update])
+            return '', 200
+        else:
+            return 'Forbidden', 403
+    except Exception as e:
+        print("WEBHOOK ERROR:", str(e))
         return '', 200
-    else:
-        return 'Forbidden', 403
 
 @bot.message_handler(func=lambda message: True)
 def track_username_change(message):
-    user_id = message.from_user.id
-    current_username = message.from_user.username
-    
-    # 【调试功能】每次你说话，机器人先在群里回显它当前看到的你
-    debug_text = f"【调试】收到你的消息 | ID: {user_id} | 当前识别用户名: @{str(current_username)}"
-    bot.reply_to(message, debug_text)
-    
-    # 检查是否记录过该用户
-    if user_id in user_db:
-        old_username = user_db[user_id]
-        if old_username != current_username:
-            old_str = f"@{old_username}" if old_username else "无用户名"
-            new_str = f"@{current_username}" if current_username else "无用户名"
-            
-            alert_text = (
-                f"⚠️ 检测到群成员修改 Username！\n\n"
-                f"用户: {message.from_user.first_name}\n"
-                f"旧用户名: {old_str}\n"
-                f"新用户名: {new_str}"
-            )
-            bot.reply_to(message, alert_text)
-    
-    # 每次发言均更新最新的用户名记录
-    user_db[user_id] = current_username
+    try:
+        user_id = message.from_user.id
+        current_username = message.from_user.username
+        
+        # 强制在群里回显
+        bot.reply_to(message, f"【收到】ID: {user_id}, Name: @{str(current_username)}")
+        
+        if user_id in user_db:
+            old_username = user_db[user_id]
+            if old_username != current_username:
+                old_str = f"@{old_username}" if old_username else "无用户名"
+                new_str = f"@{current_username}" if current_username else "无用户名"
+                bot.reply_to(message, f"⚠️ 检测到用户名修改！旧: {old_str} -> 新: {new_str}")
+        
+        user_db[user_id] = current_username
+    except Exception as e:
+        print("HANDLER ERROR:", str(e))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
