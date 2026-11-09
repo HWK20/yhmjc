@@ -4,7 +4,7 @@ from flask import Flask, request
 
 TOKEN = '9246966528:AAGElMITgNG_zCrQrxQT2_MFdRRa-O9w8_o'
 bot = telebot.TeleBot(TOKEN)
-app = Flask(name)
+app = Flask(__name__)
 
 # 用于记录用户 ID 与 Username 的对应关系
 user_db = {}
@@ -47,5 +47,5 @@ def track_username_change(message):
     # 每次发言均更新最新的用户名记录
     user_db[user_id] = current_username
 
-if name == "main":
+if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
