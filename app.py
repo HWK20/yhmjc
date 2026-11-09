@@ -6,7 +6,7 @@ from flask import Flask, request
 # 你的机器人 Token
 TOKEN = "9246966528:AAGElMITgNG_zCrQrxQT2_MFdRRa-O9w8_o"
 bot = telebot.TeleBot(TOKEN)
-app = Flask(name)
+app = Flask(__name__)
 
 # 兼容云端的本地数据路径
 DATA_FILE = "user_names.json"
