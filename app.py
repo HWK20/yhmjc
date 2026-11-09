@@ -42,7 +42,7 @@ def track_username_change(message):
                 f"🔴 旧用户名: {old_str}\n"
                 f"🟢 新用户名: {new_str}"
             )
-            bot.reply_to(message, alert_text, parse_mode="Markdown")
+            bot.reply_to(message, alert_text)
     
     # 每次发言均更新最新的用户名记录
     user_db[user_id] = current_username
