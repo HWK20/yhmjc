@@ -71,5 +71,5 @@ def track_username_changes(message):
         user_db[user_id] = {"username": current_username, "name": current_name}
         save_data(user_db)
 
-if name == "main":
+if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
